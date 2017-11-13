@@ -1,0 +1,64 @@
+pragma solidity 0.4.18;
+//In developing countries like India most of the customers buy milk from a seller who have his own dairy animals and not from the retail stores.
+//Sometimes the seller take an advantage of this and to make more profits mix water to the milk.
+//It's a big concern for a country since milk is very essential especially for growing children
+//I propose using smart contract between buyers and sellers to grade the milk quality with reliable instruments and set prices according to the grade.
+//Pass the quantity and grade to the contract and calculate the cost.
+//Send the same amount of ether to the seller.
+contract MilkProvider{
+    address owner;
+    address milkSeller;
+    
+    uint total; 
+    uint milkQty;
+    uint gd1Price;
+    uint gd2Price;
+    uint gd3Price;
+    //declare the owner
+	function MilkBuyer(){
+        owner=msg.sender;
+    }
+    //set the merchant's address
+	function setSellerAddress(address _milkSeller){
+        milkSeller = _milkSeller;
+    }
+    //pass the instrument's reading assuming there are three ranges of grades
+	//function returns the grade of milk
+    function calculateMilkGrade(uint meterReading) returns (uint _milkGrade){
+        uint milkGrade;
+        if(10<meterReading && 20>meterReading){
+            milkGrade = 1;
+        }
+        else if(20 < meterReading && 30>meterReading){
+            milkGrade = 2;
+        }
+        else if(30 < meterReading && 40>meterReading){
+            milkGrade = 3;
+        }
+        return milkGrade;
+    }
+    //set the milk price according to the grade; higher the grade, expensive the milk
+    function setThePrice(uint _gd1Price, uint _gd2Price, uint _gd3Price){
+        gd1Price = _gd1Price;
+        gd2Price = _gd2Price;
+        gd3Price = _gd3Price;
+    }
+    // calculate total amount owed by the buyer to customer
+	function calculateBill(uint milkGrade,uint _milkQty) returns (uint totalAmount){
+        if(milkGrade == 1){
+          totalAmount = 10 * _milkQty; 
+        } else if (milkGrade == 2){
+            totalAmount = 20 * _milkQty;
+        } else{
+            totalAmount = 30 * _milkQty;
+        }
+        total = totalAmount;
+    }
+	// send the calculated money to the seller's address
+    function sendMoneyToSeller(){
+        if (this.balance >= total){
+        milkSeller.send(total);
+        }
+    }
+    
+}
